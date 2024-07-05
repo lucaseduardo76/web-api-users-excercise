@@ -15,7 +15,7 @@ public class Departament implements Serializable {
 
     }
 
-    public Departament(String name, Long id) {
+    public Departament( Long id,String name) {
         this.name = name;
         this.id = id;
     }

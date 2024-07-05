@@ -1,8 +1,10 @@
 package com.crudmysql.cms.dao.implement;
 
+import com.crudmysql.cms.dao.DaoFactory;
 import com.crudmysql.cms.dao.interfac.UserDaoInter;
 import com.crudmysql.cms.db.DB;
 import com.crudmysql.cms.db.DbException;
+import com.crudmysql.cms.entities.Departament;
 import com.crudmysql.cms.entities.User;
 
 import java.sql.*;
@@ -12,7 +14,6 @@ import java.util.List;
 public class UserDao implements UserDaoInter {
 
     private Connection conn = null;
-
 
     public UserDao(Connection conn){
         this.conn = conn;
@@ -103,7 +104,14 @@ public class UserDao implements UserDaoInter {
 
 
             if(rs.next()) {
-                return new User(rs.getLong("id"), rs.getString("name"), rs.getString("email"), rs.getInt("age"));
+                Departament dep = null;
+                Long idDep = rs.getLong("departamento_id");
+                if(idDep != null){
+                    dep = DaoFactory.createDepartamentDao().findById(rs.getLong("departamento_id"));
+                }
+
+
+                return new User(rs.getLong("id"), rs.getString("name"), rs.getString("email"), rs.getInt("age"), dep);
             }
 
         }catch(SQLException e) {
@@ -124,11 +132,19 @@ public class UserDao implements UserDaoInter {
         List<User> uList = new ArrayList<>();
 
         try {
+
+
             st = conn.createStatement();
             rs = st.executeQuery("select * from users");
 
             while(rs.next()) {
-                User user = new User(rs.getLong("id"), rs.getString("name"), rs.getString("email"), rs.getInt("age"));
+                Departament dep = null;
+                Long idDep = rs.getLong("departamento_id");
+                if(idDep != null){
+                    dep = DaoFactory.createDepartamentDao().findById(rs.getLong("departamento_id"));
+                }
+
+                User user = new User(rs.getLong("id"), rs.getString("name"), rs.getString("email"), rs.getInt("age"), dep);
                 uList.add(user);
             }
         }catch(SQLException e) {

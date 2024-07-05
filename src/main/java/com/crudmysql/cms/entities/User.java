@@ -1,5 +1,7 @@
 package com.crudmysql.cms.entities;
 
+import com.crudmysql.cms.dao.DaoFactory;
+
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
@@ -12,15 +14,17 @@ public class User implements Serializable{
     private String name;
     private String email;
     private Integer age;
+    private Departament departament;
 
     public User() {
     }
 
-    public User(Long id, String name, String email, Integer age) {
+    public User(Long id, String name, String email, Integer age, Departament departament) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.age = age;
+        this.departament = departament;
     }
 
     public Long getId() {
@@ -53,6 +57,14 @@ public class User implements Serializable{
 
     public void setAge(Integer age) {
         this.age = age;
+    }
+
+    public Departament getDepartament(){
+        return departament;
+    }
+
+    public void setDepartament(Departament departament){
+        this.departament = departament;
     }
 
     @Override
