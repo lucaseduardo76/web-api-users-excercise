@@ -19,12 +19,14 @@ public class User implements Serializable{
     public User() {
     }
 
-    public User(Long id, String name, String email, Integer age, Departament departament) {
+    public User(Long id, String name, String email, Integer age, Long idDep ) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.age = age;
-        this.departament = departament;
+        if(idDep != null) {
+            this.departament = DaoFactory.createDepartamentDao().findById(idDep);
+        }
     }
 
     public Long getId() {
@@ -63,8 +65,10 @@ public class User implements Serializable{
         return departament;
     }
 
-    public void setDepartament(Departament departament){
-        this.departament = departament;
+    public void setDepartament(Long idDep){
+        if(idDep != null) {
+            this.departament = DaoFactory.createDepartamentDao().findById(idDep);
+        }
     }
 
     @Override

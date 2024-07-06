@@ -27,14 +27,16 @@ public class UserDao implements UserDaoInter {
         try {
             st = conn.prepareStatement(
                     "INSERT INTO users "
-                            +"(Name, Email, Age) "
+                            +"(Name, Email, Age, Departamento_id) "
                             +"VALUES "
-                            +"(?, ?, ?)",
+                            +"(?, ?, ?, ?)",
                     Statement.RETURN_GENERATED_KEYS);
 
             st.setString(1, obj.getName());
             st.setString(2, obj.getEmail());
             st.setInt(3, obj.getAge());
+            Long depId = obj.getDepartament() != null ? obj.getDepartament().getId() : 0L;
+            st.setLong(4, depId);
             int rowsAffected = st.executeUpdate();
 
             if (rowsAffected > 0) {
@@ -61,11 +63,12 @@ public class UserDao implements UserDaoInter {
         PreparedStatement st = null;
 
         try {
-            st = conn.prepareStatement("UPDATE users SET Name = ?, Email = ?, Age = ? WHERE Id = ?");
+            st = conn.prepareStatement("UPDATE users SET Name = ?, Email = ?, Age = ?, departamento_id = ? WHERE Id = ?");
             st.setString(1, obj.getName());
             st.setString(2, obj.getEmail());
             st.setInt(3, obj.getAge());
-            st.setLong(4, id);
+            st.setLong(4, obj.getDepartament().getId());
+            st.setLong(5, id);
             st.executeUpdate();
             return findById(id);
         }catch(SQLException e) {
@@ -106,12 +109,8 @@ public class UserDao implements UserDaoInter {
             if(rs.next()) {
                 Departament dep = null;
                 Long idDep = rs.getLong("departamento_id");
-                if(idDep != null){
-                    dep = DaoFactory.createDepartamentDao().findById(rs.getLong("departamento_id"));
-                }
 
-
-                return new User(rs.getLong("id"), rs.getString("name"), rs.getString("email"), rs.getInt("age"), dep);
+                return new User(rs.getLong("id"), rs.getString("name"), rs.getString("email"), rs.getInt("age"), rs.getLong("departamento_id"));
             }
 
         }catch(SQLException e) {
@@ -138,13 +137,8 @@ public class UserDao implements UserDaoInter {
             rs = st.executeQuery("select * from users");
 
             while(rs.next()) {
-                Departament dep = null;
-                Long idDep = rs.getLong("departamento_id");
-                if(idDep != null){
-                    dep = DaoFactory.createDepartamentDao().findById(rs.getLong("departamento_id"));
-                }
 
-                User user = new User(rs.getLong("id"), rs.getString("name"), rs.getString("email"), rs.getInt("age"), dep);
+                User user = new User(rs.getLong("id"), rs.getString("name"), rs.getString("email"), rs.getInt("age"), rs.getLong("departamento_id"));
                 uList.add(user);
             }
         }catch(SQLException e) {

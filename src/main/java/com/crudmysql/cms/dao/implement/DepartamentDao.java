@@ -20,17 +20,70 @@ public class DepartamentDao implements DepartamentDaoInter {
 
     @Override
     public Departament insert(Departament obj) {
-        return null;
+
+        PreparedStatement st = null;
+        ResultSet rs = null;
+
+        try {
+            st = conn.prepareStatement(
+                    "INSERT INTO departamentos "
+                            +"(Nome_departamento) "
+                            +"VALUES "
+                            +"(?)",
+                    Statement.RETURN_GENERATED_KEYS);
+
+            st.setString(1, obj.getName());
+            int rowsAffected = st.executeUpdate();
+
+            if (rowsAffected > 0) {
+                rs = st.getGeneratedKeys();
+                if (rs.next()) {
+                    Long id = rs.getLong(1);
+                    return findById(id);
+                } else {
+                    throw new DbException("Falha ao obter o id gerado após a inserção.");
+                }
+            } else {
+                throw new DbException("Nenhuma linha afetada ao inserir o usuário.");
+            }
+
+        } catch (SQLException e) {
+            throw new DbException(e.getMessage());
+        }finally {
+            DB.closeStatement(st);
+        }
     }
 
     @Override
     public Departament update(Long id, Departament obj) {
-        return null;
+        PreparedStatement st = null;
+
+        try {
+            st = conn.prepareStatement("UPDATE departamentos SET nome_departamento = ? WHERE Id = ?");
+            st.setString(1, obj.getName());
+            st.setLong(2, id);
+            st.executeUpdate();
+            return findById(id);
+        }catch(SQLException e) {
+            throw new DbException(e.getMessage());
+        }finally {
+            DB.closeStatement(st);
+        }
     }
 
     @Override
     public void delete(Long id) {
+        PreparedStatement st = null;
+        try {
+            st = conn.prepareStatement("DELETE FROM departamentos WHERE Id = ?");
 
+            st.setLong(1, id);
+            st.executeUpdate();
+        }catch(SQLException e) {
+            throw new DbException(e.getMessage());
+        }finally {
+            DB.closeStatement(st);
+        }
     }
 
     @Override
