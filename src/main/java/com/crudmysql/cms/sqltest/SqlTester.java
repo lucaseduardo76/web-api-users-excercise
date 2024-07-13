@@ -14,7 +14,7 @@ public class SqlTester {
         Departament dp = new Departament(5L, "Oficina");
 
         User u = userDao.findById(16L);
-        u.setDepartament(3L);
+        u.setDepartament(31L);
 
         userDao.update(16L, u);
     }
